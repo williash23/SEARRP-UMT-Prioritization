@@ -31,7 +31,7 @@ library(ggplot2)
 
 	# ----------------------
 	#  Boundaries
-	load(file = "C:/Users/saraw/Documents/SEARRP_Analyses/5_5_18/sabah_boder.Rdata")
+	load(file = "C:/Users/saraw/Documents/SEARRP_Analyses/5_5_18/mainland_sabah_boder.Rdata")
 	load(file = "C:/Users/saraw/Documents/SEARRP_Analyses/5_5_18/sabah_tpa.Rdata")
 	load(file = "C:/Users/saraw/Documents/SEARRP_Analyses/5_5_18/acd_agg_sf_for.Rdata")
 	
@@ -44,10 +44,11 @@ library(ggplot2)
 	# ----------------------
 	#  Connectivity inputs
 	corr_feat_r <- raster("C:/Users/saraw/Desktop/tmp/corr_out_r_small.grd")
-	elev_conn_feat_r <- raster::calc(elev_conn_feat_r_tmp, range01)
+	elev_conn_feat_r <- raster("C:/Users/saraw/Desktop/5_5_18/elev_conn_feat_in.grd")
 	
 	# ----------------------
 	#  ACD input
+	acd_feat_r <- raster("C:/Users/saraw/Documents/SEARRP_Analyses/optimization/feature_inputs/acd_feat_in.grd")
 	
 	# ----------------------
 	#  All inputs in single raster stack.	
@@ -163,7 +164,7 @@ library(ggplot2)
 		mutate(ras_val = 1)
 	prelim1_sp <- as(prelim1_sf, "Spatial")
 	prelim1_r <- rasterize(prelim1_sp, r_template, field = prelim1_sp$ras_val)
-	writeRaster(prelim1_r, file = "C:/Users/saraw/Desktop/to_send/prelim_map1.tif")
+	writeRaster(prelim1_r, file = "C:/Users/saraw/Desktop/5_5_18/prelim_map1.tif")
 	
 	
 	
@@ -218,7 +219,7 @@ library(ggplot2)
 		mutate(ras_val = 1)
 	prelim2_sp <- as(prelim2_sf, "Spatial")
 	prelim2_r <- rasterize(prelim2_sp, r_template, field = prelim2_sp$ras_val)
-	writeRaster(prelim2_r, file = "C:/Users/saraw/Desktop/to_send/prelim_map2.tif")
+	writeRaster(prelim2_r, file = "C:/Users/saraw/Desktop/5_5_18/prelim_map2.tif")
 
 	
 	
@@ -256,7 +257,7 @@ library(ggplot2)
 		mutate(ras_val = 1)
 	prelim3_sp <- as(prelim3_sf, "Spatial")
 	prelim3_r <- rasterize(prelim3_sp, r_template, field = prelim3_sp$ras_val)
-	writeRaster(prelim3_r, file = "C:/Users/saraw/Desktop/to_send/prelim_map3.tif")
+	writeRaster(prelim3_r, file = "C:/Users/saraw/Desktop/5_5_18/prelim_map3.tif")
 
 
 
@@ -308,7 +309,7 @@ library(ggplot2)
 		mutate(ras_val = 1)
 	prelim1b_sp <- as(prelim1b_sf, "Spatial")
 	prelim1b_r <- rasterize(prelim1b_sp, r_template, field = prelim1b_sp$ras_val)
-	writeRaster(prelim1b_r, file = "C:/Users/saraw/Desktop/to_send/prelim_map1b.tif")
+	writeRaster(prelim1b_r, file = "C:/Users/saraw/Desktop/5_5_18/prelim_map1b.tif")
 	
 
 
@@ -333,7 +334,7 @@ library(ggplot2)
 		ylim(455000, 815000) +
 		theme_bw()
 	map1
-		
+	
 	# ----------------------
 	#  Plot preliminary map 2
 	 map2 <- ggplot() +

@@ -109,6 +109,7 @@ library(RColorBrewer)
 
 	# ----------------------
 	#  Save output as polygon and raster
+	# writeRaster(acd_rc, "C:/Users/saraw/Documents/SEARRP_Analyses/optimization/acd_rc.grd")
 	# writeRaster(acd_rc_agg, "C:/Users/saraw/Documents/SEARRP_Analyses/optimization/acd_rc_agg.grd")
 	# writeRaster(acd_rc_no_mang, "C:/Users/saraw/Documents/SEARRP_Analyses/optimization/acd_rc_no_mang.grd")
 	# writeRaster(acd_rc_no_mang_agg, "C:/Users/saraw/Documents/SEARRP_Analyses/optimization/acd_rc_no_mang_agg.grd")

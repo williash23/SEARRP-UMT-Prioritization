@@ -17,6 +17,10 @@ library(rgeos)
 library(dplyr)
 library(sf)
 
+	# ----------------------	
+	#  Function to normalize rasters to 0 to 1 scale.
+	range01 <- function(x){(x-x_min)/(x_max - x_min)}
+	
 	
 	
 # =============================================================================
@@ -178,7 +182,7 @@ library(sf)
 	#writeRaster(end_fly_stack, "C:/Users/saraw/Documents/SEARRP_Analyses/optimization/feature_inputs/end_fly_stack.grd")
 	#writeRaster(non_end_fly_stack, "C:/Users/saraw/Documents/SEARRP_Analyses/optimization/feature_inputs/non_end_fly_stack.grd")
 	#writeRaster(acd_feat_in, "C:/Users/saraw/Documents/SEARRP_Analyses/optimization/feature_inputs/acd_feat_in.grd")
-	#writeRaster(elev_conn_feat_in, "C:/Users/saraw/Documents/SEARRP_Analyses/optimization/feature_inputs/elev_conn_feat_in.grd")
+	#writeRaster(elev_conn_feat_in, file = "C:/Users/saraw/Desktop/5_5_18/elev_conn_feat_in.grd")
 	
 
 	

@@ -42,17 +42,22 @@ library(ggplot2)
 	
 	# ----------------------
 	#  Connectivity inputs
-	corr_feat_r <- raster("C:/Users/saraw/Desktop/tmp/corr_out_r_small.grd")
-	elev_conn_feat_r <- raster::calc(elev_conn_feat_r_tmp, range01)
+	#corr_feat_r <- raster("C:/Users/saraw/Desktop/tmp/corr_out_r_small.grd")
+	#elev_conn_feat_r <- raster("C:/Users/saraw/Desktop/5_5_18/elev_conn_feat_in.grd")
+	prior_cond_r <- raster("
+	prior_corr_r <- raster("
 	
 	# ----------------------
 	#  ACD input
+	#acd_feat_r <- raster("C:/Users/saraw/Documents/SEARRP_Analyses/optimization/feature_inputs/acd_feat_in.grd")
+	prior_acd_r <- raster("
 	
 	# ----------------------
 	#  All inputs in single raster stack.	
-	all_feat_in <- stack(prior_vert_feat_r, prior_fly_feat_r, prior_plant_feat_r, elev_conn_feat_r, corr_feat_r, acd_feat_r)
+	#all_feat_in <- stack(prior_vert_feat_r, prior_fly_feat_r, prior_plant_feat_r, elev_conn_feat_r, corr_feat_r, acd_feat_r)
+	all_feat_in <- stack(prior_vert_feat_r, prior_fly_feat_r, prior_plant_feat_r, prior_cond_feat_r, prior_corr_feat_r, prior_acd_feat_r)
+	all_feat_in_si <- stack(prior_vert_feat_r_si, prior_fly_feat_r_si, prior_plant_feat_r_si, prior_cond_feat_r_si, prior_corr_feat_r_si, prior_acd_feat_r_si)
 
-	
 	
 # =============================================================================
 #  Set up planning units without existing TPAs
@@ -60,11 +65,11 @@ library(ggplot2)
 	
 	# ----------------------
 	#  Planning unit grids
-	load(file = "C:/Users/saraw/Desktop/5_5_18/sfi_idris_grid.Rdata")
 	load(file = "C:/Users/saraw/Desktop/5_5_18/sfi_grid.Rdata")
 	load(file = "C:/Users/saraw/Desktop/5_5_18/idris_grid.Rdata")
 	load(file = "C:/Users/saraw/Desktop/5_5_18/sa_grid.Rdata")
-		
+	load(file = "C:/Users/saraw/Desktop/5_5_18/deram_grid.Rdata")	
+	
 	const_cost_h <- 500
 	pu_sf_tmp <- sa_grid %>%
 		mutate(area_tmp = st_area(.) * 0.0001) %>%
@@ -155,8 +160,8 @@ library(ggplot2)
 
 	# ----------------------
 	#  Set up problem for round 1.
-	equal_targets <- 0.4
-	p1 <- problem(x = pu_sfi_idris_in, features = all_feat_in, cost_column = "area_h") %>%
+	equal_targets <- 0.6
+	p1 <- problem(x = pu_sfi_idris_in, features = all_feat_in_si, cost_column = "area_h") %>%
 		add_max_features_objective(200000) %>%
 		add_relative_targets(equal_targets) %>%
 		add_binary_decisions() %>%
@@ -175,13 +180,37 @@ library(ggplot2)
 	#  Set up locked in and locked out areas for round 2.
 	locked_in <- as(s1_sf, 'Spatial')
 	
+	
+	p2 <- problem(x = pu_sfi_idris_in, features = all_feat_in_si, cost_column = "area_h") %>%
+		add_max_cover_objective(200000) %>%
+		add_binary_decisions() %>%
+		add_locked_in_constraints(locked_in) %>%
+		add_gurobi_solver(time_limit = 30)
+		
+	# ----------------------
+	# Solve round 1.
+	s2 <- solve(p2)
+	s2_sf <- st_as_sf(s2) %>%
+		dplyr::filter(solution_1 == 1) %>%
+		mutate(locked_in = 1)
+	s2_area_h <- as.integer(sum(st_area(s2_sf)) * 0.0001)
+	s2_area_h
+	
+	# ----------------------
+	#  Set up locked in and locked out areas for round 2.
+	locked_in_all <- as(s2_sf, 'Spatial')
+	
+	
+	all_feat_in <- stack(prior_vert_feat_r, prior_fly_feat_r, prior_plant_feat_r, prior_cond_feat_r, prior_corr_feat_r, prior_acd_feat_r)
+
+	
 	# ----------------------
 	#  Set up problem for round 2.
-	equal_targets <- 0.2
+	equal_targets <- 0.8
 	p2 <- problem(x = pu_in, features = all_feat_in, cost_column = "area_h") %>%
 		add_max_features_objective(350000) %>%
 		add_relative_targets(equal_targets) %>%
-		add_locked_in_constraints(locked_in) %>%
+		add_locked_in_constraints(locked_in_all) %>%
 		add_locked_out_constraints(locked_out) %>%
 		add_binary_decisions() %>%
 		add_gurobi_solver(time_limit = 30)
@@ -196,13 +225,13 @@ library(ggplot2)
 	
 	# ----------------------
 	#  Set up locked in and locked out areas for round 2.
-	locked_in <- as(s2_sf, 'Spatial')
+	locked_in_new <- as(s2_sf, 'Spatial')
 	
 	# ----------------------
 	#  Set up problem for round 3.
 	p3 <- problem(x = pu_in, features = all_feat_in, cost_column = "area_h") %>%
 		add_max_utility_objective(350000) %>%
-		add_locked_in_constraints(locked_in) %>%
+		add_locked_in_constraints(locked_in_new) %>%
 		add_locked_out_constraints(locked_out) %>%
 		add_binary_decisions() %>%
 		add_gurobi_solver(time_limit = 30)
@@ -223,17 +252,17 @@ library(ggplot2)
 		mutate(ras_val = 1)
 	upd1_sp <- as(upd1_sf, "Spatial")
 	upd1_r <- rasterize(upd1_sp, r_template, field = upd1_sp$ras_val)
-	writeRaster(upd1_r, file = "C:/Users/saraw/Desktop/to_send/upd_map1.tif")
+	writeRaster(upd1_r, file = "C:/Users/saraw/Desktop/5_9_18/upd_map1.tif")
 	
 	
 
 # =============================================================================
-#  Scenario 2 - 200,00 from SFI-Idris combined, neighbor constraints
+#  Scenario 2 - 200,000 from SFI-Idris combined, neighbor constraints
 # =============================================================================
 	
 	# ----------------------
 	#  Set up problem for round 1.
-	equal_targets <- 0.4
+	equal_targets <- 0.3
 	p1 <- problem(x = pu_sfi_idris_in, features = all_feat_in, cost_column = "area_h") %>%
 		add_max_features_objective(200000) %>%
 		add_relative_targets(equal_targets) %>%
@@ -256,7 +285,7 @@ library(ggplot2)
 
 	# ----------------------
 	#  Set up problem for round 2.
-	equal_targets <- 0.2
+	equal_targets <- 0.3
 	p2 <- problem(x = pu_in, features = all_feat_in, cost_column = "area_h") %>%
 		add_max_features_objective(350000) %>%
 		add_relative_targets(equal_targets) %>%
@@ -304,17 +333,17 @@ library(ggplot2)
 		mutate(ras_val = 1)
 	upd2_sp <- as(upd1_sf, "Spatial")
 	upd2_r <- rasterize(upd2_sp, r_template, field = upd2_sp$ras_val)
-	writeRaster(upd2_r, file = "C:/Users/saraw/Desktop/to_send/upd_map2.tif")
+	writeRaster(upd2_r, file = "C:/Users/saraw/Desktop/5_5_18/upd_map2_w_si_all_feat.tif")
 	
 	
 	
 # =============================================================================
-#  Scenario 3 - 200,00 from SFI-Idris combined, boundary length modifier
+#  Scenario 3 - 200,000 from SFI-Idris combined, boundary length modifier
 # =============================================================================
 	
-# ----------------------
+	# ----------------------
 	#  Set up problem for round 1.
-	equal_targets <- 0.4
+	equal_targets <- 0.3
 	p1 <- problem(x = pu_sfi_idris_in, features = all_feat_in, cost_column = "area_h") %>%
 		add_max_features_objective(200000) %>%
 		add_relative_targets(equal_targets) %>%
@@ -337,7 +366,7 @@ library(ggplot2)
 	
 	# ----------------------
 	#  Set up problem for round 2.
-	equal_targets <- 0.2
+	equal_targets <- 0.3
 	p2 <- problem(x = pu_in, features = all_feat_in, cost_column = "area_h") %>%
 		add_max_features_objective(350000) %>%
 		add_relative_targets(equal_targets) %>%
@@ -366,7 +395,7 @@ library(ggplot2)
 		mutate(ras_val = 1)
 	upd3_sp <- as(upd3_sf, "Spatial")
 	upd3_r <- rasterize(upd3_sp, r_template, field = upd3_sp$ras_val)
-	writeRaster(upd3_r, file = "C:/Users/saraw/Desktop/to_send/upd_map3.tif")
+	writeRaster(upd3_r, file = "C:/Users/saraw/Desktop/5_5_18/upd_map3_w_si_all_feat.tif")
 
 	
 	

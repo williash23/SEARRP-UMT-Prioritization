@@ -1,6 +1,6 @@
 ###############################################################################
-#  Connectivity through movement simulation.
-#  September 18, 2017; last updated December 14, 2017
+#  Process all species ranges for all taxa.
+#  September 18, 2017; last updated May 5, 2018
 #  Script to generate spp ranges inputs for use in prioritizr package. In this packages' 
 #   nomenclature, each spp range input is called a 'conservation feature' and is a 
 #   RasterLayer within a RasterStack object. Cell values are 1 (spp range does occur) and 
@@ -297,7 +297,7 @@ library(ggplot2)
 	# ----------------------
 	#  Save outputs.
 	#writeRaster(plants_feat_rep, "C:/Users/saraw/Documents/SEARRP_Analyses/optimization/feature_inputs/plants_feat_rep.grd")
-	#writeRaster(plants_all, "C:/Users/saraw/Documents/SEARRP_Analyses/optimization/feature_inputs/plants_all.grd")
+	#writeRaster(plant_all, "C:/Users/saraw/Documents/SEARRP_Analyses/optimization/feature_inputs/plant_all.grd")
 	#save(plant_rep_weight, file = "C:/Users/saraw/Documents/SEARRP_Analyses/optimization/feature_inputs/plant_rep_weight.Rdata")
 
 	
