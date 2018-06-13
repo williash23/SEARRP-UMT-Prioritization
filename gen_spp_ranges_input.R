@@ -26,10 +26,6 @@ library(ggplot2)
 #   and plants, these are the SDM outputs from Sarah Scriven.
 # =============================================================================
 
-	# ----------------------
-	#  Boundaries
-	load(file = "C:/Users/saraw/Documents/SEARRP_Analyses/optimization/border_sabah_sf.Rdata")
-	load(file = "C:/Users/saraw/Documents/SEARRP_Analyses/optimization/sabah_pa_sf.Rdata")
 
 	
 	# ----------------------
@@ -49,13 +45,13 @@ library(ggplot2)
 
 	# ----------------------
 	#  Prepped butterfly SDM raster layers
-	fly_end <- stack("C:/Users/saraw/Documents/SEARRP_Analyses/optimization/feature_inputs/end_fly_stack.grd")
-	fly_non_end <- stack("C:/Users/saraw/Documents/SEARRP_Analyses/optimization/feature_inputs/non_end_fly_stack.grd")
+	fly_end <- stack("C:/Users/saraw/Documents/SEARRP_Analyses/optimization/feature_prep/end_fly_stack.grd")
+	fly_non_end <- stack("C:/Users/saraw/Documents/SEARRP_Analyses/optimization/feature_prep/non_end_fly_stack.grd")
 
 	# ----------------------
 	#  Prepped plant raster layers
-	plants_end <- stack("C:/Users/saraw/Documents/SEARRP_Analyses/optimization/feature_inputs/all_end_plant_stack.grd")
-	plants_non_end <- stack("C:/Users/saraw/Documents/SEARRP_Analyses/optimization/feature_inputs/all_non_end_plant_stack.grd")
+	plants_end <- stack("C:/Users/saraw/Documents/SEARRP_Analyses/optimization/feature_prep/all_end_plant_stack.grd")
+	plants_non_end <- stack("C:/Users/saraw/Documents/SEARRP_Analyses/optimization/feature_prep/all_non_end_plant_stack.grd")
 
 
 # =============================================================================
@@ -222,9 +218,9 @@ library(ggplot2)
 
 	# ----------------------
 	#  Save outputs.
-	#writeRaster(vert_feat_rep, "C:/Users/saraw/Documents/SEARRP_Analyses/optimization/feature_inputs/vert_feat_rep.grd")
-	#writeRaster(vert_all, "C:/Users/saraw/Documents/SEARRP_Analyses/optimization/feature_inputs/vert_all.grd")
-	#save(vert_rep_weight, file = "C:/Users/saraw/Documents/SEARRP_Analyses/optimization/feature_inputs/vert_rep_weight.Rdata")
+	#writeRaster(vert_feat_rep, "C:/Users/saraw/Documents/SEARRP_Analyses/feature_inputs/vert_feat_rep.grd")
+	#writeRaster(vert_all, "C:/Users/saraw/Documents/SEARRP_Analyses/feature_inputs/vert_all.grd")
+	#save(vert_rep_weight, file = "C:/Users/saraw/Documents/SEARRP_Analyses/feature_inputs/vert_rep_weight.Rdata")
 	
 	
 # =============================================================================
@@ -249,9 +245,9 @@ library(ggplot2)
 
 	# ----------------------
 	#  Save outputs.
-	#writeRaster(fly_feat_rep, "C:/Users/saraw/Documents/SEARRP_Analyses/optimization/feature_inputs/fly_feat_rep.grd")
-	#writeRaster(fly_all, "C:/Users/saraw/Documents/SEARRP_Analyses/optimization/feature_inputs/fly_all.grd")
-	#save(fly_rep_weight, file = "C:/Users/saraw/Documents/SEARRP_Analyses/optimization/feature_inputs/fly_rep_weight.Rdata")
+	#writeRaster(fly_feat_rep, "C:/Users/saraw/Documents/SEARRP_Analyses/feature_inputs/fly_feat_rep.grd")
+	#writeRaster(fly_all, "C:/Users/saraw/Documents/SEARRP_Analyses/feature_inputs/fly_all.grd")
+	#save(fly_rep_weight, file = "C:/Users/saraw/Documents/SEARRP_Analyses/feature_inputs/fly_rep_weight.Rdata")
 	
 	
 # =============================================================================
@@ -296,14 +292,21 @@ library(ggplot2)
 	
 	# ----------------------
 	#  Save outputs.
-	#writeRaster(plants_feat_rep, "C:/Users/saraw/Documents/SEARRP_Analyses/optimization/feature_inputs/plants_feat_rep.grd")
-	#writeRaster(plant_all, "C:/Users/saraw/Documents/SEARRP_Analyses/optimization/feature_inputs/plant_all.grd")
-	#save(plant_rep_weight, file = "C:/Users/saraw/Documents/SEARRP_Analyses/optimization/feature_inputs/plant_rep_weight.Rdata")
+	#writeRaster(plants_feat_rep, "C:/Users/saraw/Documents/SEARRP_Analyses/feature_inputs/plants_feat_rep.grd")
+	#writeRaster(plant_all, "C:/Users/saraw/Documents/SEARRP_Analyses/feature_inputs/plant_all.grd")
+	#save(plant_rep_weight, file = "C:/Users/saraw/Documents/SEARRP_Analyses/feature_inputs/plant_rep_weight.Rdata")
 
 	
+# =============================================================================	
+###############################################################################
+
+
+
+
+
 	
 # =============================================================================
-#  spp richness
+#  Other idea - spp richness
 # =============================================================================		
 	
 	vert_all <- stack("C:/Users/saraw/Documents/SEARRP_Analyses/optimization/feature_inputs/vert_all.grd")

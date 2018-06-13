@@ -17,11 +17,7 @@ library(rgeos)
 library(dplyr)
 library(sf)
 
-	# ----------------------	
-	#  Function to normalize rasters to 0 to 1 scale.
-	range01 <- function(x){(x-x_min)/(x_max - x_min)}
-	
-	
+		
 	
 # =============================================================================
 #  Load data.
@@ -29,32 +25,32 @@ library(sf)
 
 	# ----------------------	
 	#  Stack all .tif files of endemic butterfly ranges.
-	setwd("C:/Users/saraw/Desktop/SDM_Butterflies/Endemics")
+	setwd("C:/Users/saraw/Documents/SEARRP_Analyses/feature_prep/SDM_Butterflies/Endemics")
 	end_fly_ls <- list.files(pattern='\\.tif$')
 	end_fly_stack <- stack(end_fly_ls)
 	
 	# ----------------------	
 	#  Stack all .tif files of non-endemic butterfly ranges.
-	setwd("C:/Users/saraw/Desktop/SDM_Butterflies/Non-endemics")
+	setwd("C:/Users/saraw/Documents/SEARRP_Analyses/feature_prep/SDM_Butterflies/Non-endemics")
 	non_end_fly_ls <- list.files(pattern='\\.tif$')
 	non_end_fly_stack <- stack(non_end_fly_ls)
 	
 	# ----------------------	
 	#  Stack all .tif files of endemic plant ranges.
-	setwd("C:/Users/saraw/Desktop/SDM_Plants/Endemics")
+	setwd("C:/Users/saraw/Documents/SEARRP_Analyses/feature_prep/SDM_Plants/Endemics")
 	end_plant_ls <- list.files(pattern='\\.asc$')
 	end_plant_stack <- stack(end_plant_ls)
 	
 	# ----------------------	
 	#  Stack all .tif files of non-endemic plant ranges.
-	setwd("C:/Users/saraw/Desktop/SDM_Plants/Non-endemics")
+	setwd("C:/Users/saraw/Documents/SEARRP_Analyses/feature_prep/SDM_Plants/Non-endemics")
 	non_end_plant_ls <- list.files(pattern='\\.asc$')
 	non_end_plant_stack <- stack(non_end_plant_ls)
 	
 	# ----------------------	
 	# Rare plant spp.
-	rare_end_plant_sp <- shapefile("C:/Users/saraw/Desktop/Locked_rare_spp/Endemic/AllEndemicPlants_SquareBuffers.shp")
-	rare_non_end_plant_sp <- shapefile("C:/Users/saraw/Desktop/Locked_rare_spp/Non-endemic/Dipterocarp_500mSquareBufferNonEndemic.shp")
+	rare_end_plant_sp <- shapefile("C:/Users/saraw/Documents/SEARRP_Analyses/feature_prep/Locked_rare_spp/Endemic/AllEndemicPlants_SquareBuffers.shp")
+	rare_non_end_plant_sp <- shapefile("C:/Users/saraw/Documents/SEARRP_Analyses/feature_prep/Locked_rare_spp/Non-endemic/Dipterocarp_500mSquareBufferNonEndemic.shp")
 	
 	
 	
@@ -70,7 +66,10 @@ library(sf)
 	extent(r_template) <- extent(temp)
 	projection(r_template) <- CRS("+proj=utm +zone=50 +datum=WGS84 +units=m +no_defs +ellps=WGS84 +towgs84=0,0,0") 
 	
-
+	# ----------------------	
+	#  Function to normalize rasters to 0 to 1 scale.
+	range01 <- function(x){(x-x_min)/(x_max - x_min)}
+	
 	
 	
 # =============================================================================
@@ -142,7 +141,7 @@ library(sf)
 	
 	# ----------------------
 	#  Load unmasked carbon map from Asner et al.
-	acd <- raster("C:/Users/saraw/Documents/SEARRP_Analyses/raw_spat_data/CAO_ACD_30m_unmasked.tif")
+	acd <- raster("C:/Users/saraw/Documents/SEARRP_Analyses/feature_prep/CAO_ACD_30m_unmasked.tif")
 	x_min <- acd@data@min
 	x_max <- acd@data@max
 	acd_tmp <- raster::calc(acd, range01)
@@ -159,7 +158,7 @@ library(sf)
 	
 	# ----------------------
 	#  Load raster stack from Hodgsen et al.
-	load("C:/Users/saraw/Documents/SEARRP_Analyses/optimization/stackedresultsreweight.Rdata")
+	load("C:/Users/saraw/Documents/SEARRP_Analyses/feature_prep/stackedresultsreweight.Rdata")
 	elev_conn <- condstack2$reweight
 	x_min <- elev_conn@data@min
 	x_max <- elev_conn@data@max
@@ -177,12 +176,12 @@ library(sf)
 	
 	# ----------------------	
 	# Save.
-	#writeRaster(all_end_plant_stack, "C:/Users/saraw/Documents/SEARRP_Analyses/optimization/feature_inputs/all_end_plant_stack.grd")
-	#writeRaster(all_non_end_plant_stack, "C:/Users/saraw/Documents/SEARRP_Analyses/optimization/feature_inputs/all_non_end_plant_stack.grd")
-	#writeRaster(end_fly_stack, "C:/Users/saraw/Documents/SEARRP_Analyses/optimization/feature_inputs/end_fly_stack.grd")
+	#writeRaster(all_end_plant_stack, "C:/Users/saraw/Documents/SEARRP_Analyses/optimization/feature_prep/all_end_plant_stack.grd")
+	#writeRaster(all_non_end_plant_stack, "C:/Users/saraw/Documents/SEARRP_Analyses/optimization/feature_prep/all_non_end_plant_stack.grd")
+	#writeRaster(end_fly_stack, "C:/Users/saraw/Documents/SEARRP_Analyses/optimization/feature_prep/end_fly_stack.grd")
 	#writeRaster(non_end_fly_stack, "C:/Users/saraw/Documents/SEARRP_Analyses/optimization/feature_inputs/non_end_fly_stack.grd")
-	#writeRaster(acd_feat_in, "C:/Users/saraw/Documents/SEARRP_Analyses/optimization/feature_inputs/acd_feat_in.grd")
-	#writeRaster(elev_conn_feat_in, file = "C:/Users/saraw/Desktop/5_5_18/elev_conn_feat_in.grd")
+	#writeRaster(acd_feat_in, "C:/Users/saraw/Documents/SEARRP_Analyses/feature_inputs/acd_feat_in.grd")
+	#writeRaster(elev_conn_feat_in, file = "C:/Users/saraw/Documents/SEARRP_Analyses/feature_inputs/elev_conn_feat_in.grd")
 	
 
 	

@@ -51,7 +51,7 @@ library(RColorBrewer)
 	# ----------------------
 	#  Load unmasked carbon map from Asner et al.
 	acd <- raster("C:/Users/saraw/Documents/SEARRP_Analyses/raw_spat_data/CAO_ACD_30m_unmasked.tif")
-	acd_agg <- rater::aggregate(acd, agg_fact)
+	acd_agg <- raster::aggregate(acd, agg_fact)
 	
 	# ----------------------
 	#  Forest reserves
