@@ -103,12 +103,6 @@ library(sf)
 	range01 <- function(x){(x-x_min)/(x_max - x_min)}
 	
 	# ----------------------
-	#  Create existing PA raster.
-	pa_sp <- as(sabah_tpa, 'Spatial')
-	pa_r <- rasterize(pa_sp, r_template, field = pa_sp$CLASS) 
-	pa_r[pa_r > 0] <- 1
-	
-	# ----------------------
 	#  Create sp obect of Sabah mainland border
 	border_sp <- as(main_sabah_sf, "Spatial")
 	
@@ -171,39 +165,18 @@ library(sf)
 	all_non_end_plant_stack <- stack(non_end_plant_stack_rs, rare_non_end_plant_stack)
 	
 	# ----------------------
-	#  Determine which endemic plants have range ONLY within EXISTING PA and remove.
- 	plants_end_rem_tmp <- all_end_plant_stack
-	plants_end_rem <- raster::mask(plants_end_rem_tmp, pa_r, updateValue = 0, inverse = TRUE)
-	plants_end_rem[is.na(plants_end_rem)] <- 0
-	lay_max <- cellStats(plants_end_rem, max) 
-	#  Those with 0 should be removed: layer 
-	rem_lay <- which(lay_max %in% 0)
-	plants_end_rem <- dropLayer(plants_end_rem, rem_lay)
-	
-	# ----------------------
-	#  Determine which non endemic plants species have range ONLY within EXISTING PA and remove.
- 	plants_non_end_rem_tmp <- plants_non_end
-	plants_non_end_rem <- raster::mask(plants_non_end_rem_tmp, pa_r, updateValue = 0, 
-		inverse = TRUE)
-	plants_non_end_rem[is.na(plants_non_end_rem)] <- 0
-	lay_max <- cellStats(plants_non_end_rem, max) 
-	#  Those with 0 should be removed: layer 
-	rem_lay <- which(lay_max %in% 0)
-	plants_non_end_rem <- dropLayer(plants_non_end_rem, rem_lay)
-	
-	# ----------------------
 	#  Combine all plant layers (endemic and non-endemic) that occur outside PAs
-	plant_all <- stack(plants_end_rem, plants_non_end_rem)
+	plant_all <- stack(all_end_plant_stack, all_non_end_plant_stack)
 	plant_all[is.na(plant_all)] <- 0
 	
 	# ----------------------
 	#  Generate weighting vector.
-	plant_rep_weight <- c(rep(2, nlayers(plants_end_rem)), rep(1, nlayers(plants_non_end_rem)))
-		
+	plant_rep_weight_w_pa_range <- c(rep(2, nlayers(all_end_plant_stack)), rep(1, nlayers(all_non_end_plant_stack)))
+	
 	# ----------------------
 	#  Save outputs.
-	#writeRaster(plant_all, file = "feature_inputs/plant_all.grd")
-	#save(plant_rep_weight, file = "feature_inputs/plant_rep_weight.Rdata")
+	#writeRaster(plant_all, file = "Prioritization/feature_inputs/plant_all_w_pa_range.grd")
+	#save(plant_rep_weight_w_pa_range, file = "Prioritization/feature_inputs/plant_rep_weight_w_pa_range.Rdata")
 
 	
 
@@ -213,18 +186,17 @@ library(sf)
   	
 	# ----------------------
 	#  Combine all butterfly layers (endemic and non-endemic)
- 	fly_all_tmp <- stack(end_fly_stack, non_end_fly_stack)
-	fly_all <- raster::mask(fly_all_tmp, pa_r, updateValue = 0, inverse = TRUE)
+ 	fly_all <- stack(end_fly_stack, non_end_fly_stack)
 	fly_all[is.na(fly_all)] <- 0
 	
  	# ----------------------
 	#  Generate weighting vector.
-	fly_rep_weight <- c(rep(2, nlayers(end_fly_stack)), rep(1, nlayers(non_end_fly_stack)))
+	fly_rep_weight_w_pa_range <- c(rep(2, nlayers(end_fly_stack)), rep(1, nlayers(non_end_fly_stack)))
 	
 	# ----------------------
 	#  Save outputs.
-	#writeRaster(fly_all, file = "feature_inputs/fly_all.grd")
-	#save(fly_rep_weight, file = "feature_inputs/fly_rep_weight.Rdata")
+	#writeRaster(fly_all, file = "feature_inputs/fly_all_w_pa_range.grd")
+	#save(fly_rep_weight_w_pa_range, file = "feature_inputs/fly_rep_weight_w_pa_range.Rdata")
 	
 	
 
@@ -316,30 +288,15 @@ library(sf)
 	# ----------------------
 	#  Combine all taxa in a single stack.
 	sf_all <- rbind(sf_m, sf_a, sf_b)
-	vert_all_tmp <- stack(feat_m, feat_a, feat_b)
-	vert_all <- raster::mask(vert_all_tmp, pa_r, updateValue = 0, inverse = TRUE)
+	vert_all <- stack(feat_m, feat_a, feat_b)
 	vert_all[is.na(vert_all)] <- 0
 	
-	# ----------------------
-	#  Determine which species have range ONLY within EXISTING PA and remove.
-	cellStats(vert_all, max) 
-	#  Those with 0 should be removed: layer 52, 54, 63 (2 amphibians, 1 bird).
-	vert_all <- dropLayer(vert_all, c(52, 54, 63))
-	
-	# ----------------------
-	#  Generate weighting vector.
-	#   First remove rows for species that were removed from raster stack above.
-	df_a_rem <- df_a %>%
-		dplyr::filter(binomial != "Philautus gunungensis") %>%
-		dplyr::filter(binomial != "Philautus saueri")
-	df_b_rem <- df_b %>%
-		dplyr::filter(binomial != "Ducula pickeringii")
-	vert_rep_weight <- c(df_m$threat_wt, df_a_rem$threat_wt, df_b_rem$threat_wt)
+	vert_rep_weight_w_pa_range <- c(df_m$threat_wt, df_a$threat_wt, df_b$threat_wt)
 	
 	# ----------------------
 	#  Save outputs.
-	#writeRaster(vert_all, file = "feature_inputs/vert_all.grd")
-	#save(vert_rep_weight, file = "feature_inputs/vert_rep_weight.Rdata")
+	#writeRaster(vert_all, file = "Prioritization/feature_inputs/vert_all_w_pa_range.grd")
+	#save(vert_rep_weight_w_pa_range, file = "Prioritization/feature_inputs/vert_rep_weight_w_pa_range.Rdata")
 	
 
 	
@@ -353,13 +310,12 @@ library(sf)
 	#  Process unmasked carbon map from Asner et al.
 	acd <- raster("Spatial_data/raw_spat_data/CAO_ACD_30m_unmasked.tif")
 	acd_tmp1 <- raster::resample(acd, r_template, method = 'bilinear')
-	acd_tmp2 <- raster::mask(acd_tmp1, pa_r, updateValue = 0, inverse = TRUE)
 	
-	x_min <- cellStats(acd_tmp2, min)
-	x_max <- cellStats(acd_tmp2, max)
-	acd_feat_in <- raster::calc(acd_tmp2, range01)
+	x_min <- cellStats(acd_tmp1, min)
+	x_max <- cellStats(acd_tmp1, max)
+	acd_feat_in <- raster::calc(acd_tmp1, range01)
 
-	#writeRaster(acd_feat_in, "Prioritization/feature_inputs/acd_feat_in.grd")
+	#writeRaster(acd_feat_in, "Prioritization/feature_inputs/acd_feat_in_w_pa_range.grd")
 	
 	
 	
@@ -373,13 +329,12 @@ library(sf)
 	elev_conn <- condstack2$reweight
 	elev_conn_tmp1 <- raster::resample(elev_conn, r_template, method = 'bilinear')
 	elev_conn_tmp2 <- raster::mask(elev_conn_tmp1, border_sp, updateValue = 0)
-	elev_conn_tmp3 <- raster::mask(elev_conn_tmp2, pa_r, updateValue = 0, inverse = TRUE)
-	
-	x_min <- elev_conn_tmp3@data@min
-	x_max <- elev_conn_tmp3@data@max
-	elev_conn_feat_in <- raster::calc(elev_conn_tmp3, range01)
+		
+	x_min <- elev_conn_tmp2@data@min
+	x_max <- elev_conn_tmp2@data@max
+	elev_conn_feat_in <- raster::calc(elev_conn_tmp2, range01)
 
-	#writeRaster(elev_conn_feat_in,"Prioritization/feature_inputs/elev_conn_feat_in.grd")
+	#writeRaster(elev_conn_feat_in,"Prioritization/feature_inputs/elev_conn_feat_in_w_pa_range.grd")
 
 	
 	
@@ -391,13 +346,12 @@ library(sf)
 	#  Resample to raster template.
 	corr_r  <- raster("Prioritization/feature_prep/corr_sm.grd")
 	corr_conn_tmp1 <- raster::resample(corr_r, r_template, method = 'bilinear')
-	corr_conn_tmp2 <- raster::mask(corr_conn_tmp1, pa_r, updateValue = 0, inverse = TRUE)
 	
-	x_min <- corr_conn_tmp2@data@min
-	x_max <- corr_conn_tmp2@data@max
-	corr_conn_feat_in <- raster::calc(corr_conn_tmp2, range01)
+	x_min <- corr_conn_tmp1@data@min
+	x_max <- corr_conn_tmp1@data@max
+	corr_conn_feat_in <- raster::calc(corr_conn_tmp1, range01)
 
-	#writeRaster(corr_conn_feat_in,"Prioritization/feature_inputs/corr_conn_feat_in.grd")
+	#writeRaster(corr_conn_feat_in,"Prioritization/feature_inputs/corr_conn_feat_in_w_pa_range.grd")
 	
 	
 	
@@ -430,9 +384,9 @@ library(sf)
 		for_form_stack <- stack(for_form_stack, r_tmp)
 		}
 	
-	for_form_feat_in <- raster::mask(for_form_stack, pa_r, updateValue = 0, inverse = TRUE)
+	for_form_feat_in <- for_form_stack
 	
-	#writeRaster(for_form_feat_in, "Prioritization/feature_inputs/forest_form_feat_in.grd")
+	#writeRaster(for_form_feat_in, "Prioritization/feature_inputs/forest_form_feat_in_w_pa_range.grd")
 	
 	
 

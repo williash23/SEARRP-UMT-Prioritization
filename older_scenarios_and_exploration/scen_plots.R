@@ -20,35 +20,38 @@ library(prioritizr)
 library(ggplot2)
 
 
+setwd("C:/Users/saraw/Documents/Prioritization/")
+
 # =============================================================================
 #  Load data.
 # =============================================================================		
 
 	# ----------------------
 	#  Boundaries
-	load(file ="C:/Users/saraw/Desktop/boundaries/sabah_border.Rdata")
-	load(file ="C:/Users/saraw/Desktop/boundaries/kali_border.Rdata")
-	load(file ="C:/Users/saraw/Desktop/boundaries/sarawak_border.Rdata")
-	load(file = "C:/Users/saraw/Desktop/boundaries/sabah_tpa.Rdata")
-	load(file = "C:/Users/saraw/Desktop/planning_unit_grids/sfi_grid.Rdata")
-	load(file = "C:/Users/saraw/Desktop/planning_unit_grids/idris_grid.Rdata")
-	load(file = "C:/Users/saraw/Desktop/planning_unit_grids/deram_grid.Rdata")
-	load(file = "C:/Users/saraw/Desktop/planning_unit_grids/sega_grid.Rdata")
-	load(file = "C:/Users/saraw/Desktop/planning_unit_grids/crock_kina_grid.Rdata")
+	load(file ="study_area_boundaries_and_pas/sabah_border.Rdata")
+	load(file ="study_area_boundaries_and_pas/kali_border.Rdata")
+	load(file ="study_area_boundaries_and_pas/sarawak_border.Rdata")
+	load(file = "study_area_boundaries_and_pas/sabah_tpa.Rdata")
+	load(file = "planning_unit_grids/sfi_grid.Rdata")
+	load(file = "planning_unit_grids/idris_grid.Rdata")
+	load(file = "planning_unit_grids/deram_grid.Rdata")
+	load(file = "planning_unit_grids/sega_grid.Rdata")
+	load(file = "planning_unit_grids/crock_kina_grid.Rdata")
 	
 	# ----------------------
 	#  Prioritization outputs
-	load(file = "C:/Users/saraw/Desktop/scenario_outputs/scen1/scen1_sf.Rdata")
-	load(file = "C:/Users/saraw/Desktop/scenario_outputs/scen1/scen1_blm_sf.Rdata")
-	load(file = "C:/Users/saraw/Desktop/scenario_outputs/scen2/scen2_sf.Rdata")
-	load(file = "C:/Users/saraw/Desktop/scenario_outputs/scen2/scen2_blm_sf.Rdata")
-	load(file = "C:/Users/saraw/Desktop/scenario_outputs/scen3/scen3_sf.Rdata")
-	load(file = "C:/Users/saraw/Desktop/scenario_outputs/scen3/scen3_blm_sf.Rdata")
-	load(file = "C:/Users/saraw/Desktop/scenario_outputs/scen4/scen4_sf.Rdata")
-	load(file = "C:/Users/saraw/Desktop/scenario_outputs/scen4/scen4_blm_sf.Rdata")
-	load(file = "C:/Users/saraw/Desktop/scenario_outputs/scen5/scen5_sf.Rdata")
-	load(file = "C:/Users/saraw/Desktop/scenario_outputs/scen5/scen5_blm_sf.Rdata")
-	
+	load(file = "scenario_outputs/scen1/scen1_sf.Rdata")
+	load(file = "scenario_outputs/scen1/scen1_blm_sf.Rdata")
+	load(file = "scenario_outputs/scen2/scen2_sf.Rdata")
+	load(file = "scenario_outputs/scen2/scen2_blm_sf.Rdata")
+	load(file = "scenario_outputs/scen3/scen3_sf.Rdata")
+	load(file = "scenario_outputs/scen3/scen3_blm_sf.Rdata")
+	load(file = "scenario_outputs/scen4/scen4_sf.Rdata")
+	load(file = "scenario_outputs/scen4/scen4_blm_sf.Rdata")
+	load(file = "scenario_outputs/scen5/scen5_sf.Rdata")
+	load(file = "scenario_outputs/scen5/scen5_blm_sf.Rdata")
+	load(file = "scenario_outputs/scen5/scen6_sf.Rdata")
+	load(file = "scenario_outputs/scen5/scen6_blm_sf.Rdata")
 	
 	
 # =============================================================================
@@ -270,9 +273,9 @@ library(ggplot2)
 	
 	### Scenario 5###
 	#  Conditions:
-	#     1. Total area for overall prioritization 454,000 ha
+	#     1. Total area for overall prioritization 440,000 ha
 	#        - 6 individual inputs prioritized separately for whole of Sabah then prioritized together 
-	#          for 454,000 ha across all Sabah
+	#          for 440,000 ha across all Sabah
 
 	# ----------------------
 	#  Map 5
@@ -316,13 +319,62 @@ library(ggplot2)
 	
 	
 	
+	### Scenario 6 ###
+	#  Conditions:
+	#     1. Total area for overall prioritization 440,000 ha
+	#        - 6 individual inputs prioritized separately for whole of Sabah then prioritized together 
+	#          for 440,000 ha across all Sabah
+	#     2. EcoLinc area locked in
+
+	# ----------------------
+	#  Map 6
+	map6 <- ggplot() +
+		geom_sf(data = sabah_border, colour = "grey50", fill = "grey50", alpha = 0.7) +
+		geom_sf(data = sarawak_border, colour = "grey30", fill = "transparent") +
+		geom_sf(data = kali_border, colour = "grey30", fill = "transparent") +
+		geom_sf(data = sabah_tpa,  colour = "#185b27", fill = "#185b27", alpha = 0.7) +
+		#geom_sf(data = sfi_grid, fill = "mediumpurple4", colour = "mediumpurple4", alpha = 0.7) +
+		#geom_sf(data = idris_grid, fill = "mediumpurple3", colour = "mediumpurple3", alpha = 0.7) +
+		#geom_sf(data = crock_kina_grid, fill = "darkslategray4", colour = "darkslategray4", alpha = 0.7) +
+		#geom_sf(data = sega_grid,  fill = "tomato2",  colour = "tomato2", alpha = 0.7) +
+		#geom_sf(data = deram_grid,  fill = "tomato4",  colour = "tomato4", alpha = 0.7) +
+		geom_sf(data = scen5_sf, fill = "goldenrod3", colour = "goldenrod3", alpha = 0.8) +
+		coord_sf(crs = st_crs(32650)) +
+		xlim(315000, 755000) +
+		ylim(455000, 815000) +
+		ggtitle("Scenario 6 \nNo BLM") +
+		theme_bw()
+	map6
+	
+	# ----------------------
+	#  Map 6 with BLM constraint
+	map6_blm <- ggplot() +
+		geom_sf(data = sabah_border, colour = "grey50", fill = "grey50", alpha = 0.7) +
+		geom_sf(data = sarawak_border, colour = "grey30", fill = "transparent") +
+		geom_sf(data = kali_border, colour = "grey30", fill = "transparent") +
+		geom_sf(data = sabah_tpa,  colour = "#185b27", fill = "#185b27", alpha = 0.7) +
+		#geom_sf(data = sfi_grid, fill = "mediumpurple4", colour = "mediumpurple4", alpha = 0.7) +
+		#geom_sf(data = idris_grid, fill = "mediumpurple3", colour = "mediumpurple3", alpha = 0.7) +
+		#geom_sf(data = crock_kina_grid, fill = "darkslategray4", colour = "darkslategray4", alpha = 0.7) +
+		#geom_sf(data = sega_grid,  fill = "tomato2",  colour = "tomato2", alpha = 0.7) +
+		#geom_sf(data = deram_grid,  fill = "tomato4",  colour = "tomato4", alpha = 0.7) +
+		geom_sf(data = scen5_blm_sf, fill = "goldenrod3", colour = "goldenrod3", alpha = 0.8) +
+		coord_sf(crs = st_crs(32650)) +
+		xlim(315000, 755000) +
+		ylim(455000, 815000) +
+		ggtitle("Scenario 5 \nWith BLM") +
+		theme_bw()
+	map6_blm
+	
+	
+	
 # =============================================================================
 #  Write prioritization solutions to rasters.
 # =============================================================================		
 
 	# ----------------------
 	#  Create raster following template of study area 
-	fly_feat_in_single <- stack("C:/Users/saraw/Desktop/feature_inputs/fly_all.grd")
+	fly_feat_in_single <- stack("C:/Users/saraw/Desktop/feature_inputs/acd_feat_in.grd")
 	temp <- fly_feat_in_single[[1]]
 	r_mat <- matrix(0, nrow(temp), ncol(temp))
 	r_template <- raster(r_mat)

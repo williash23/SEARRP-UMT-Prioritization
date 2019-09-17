@@ -14,6 +14,8 @@
 #     1. No BLM constraints
 #     2. BLM constraint
 
+setwd("C:/Users/saraw/Documents/Prioritization/")
+
 
 
 # =============================================================================
@@ -38,21 +40,21 @@ library(ggplot2)
 
 	# ----------------------
 	#  Load species ranges (1 layer per species).
-	vert_feat_in_single <- stack("C:/Users/saraw/Desktop/feature_inputs/vert_all.grd")
-	fly_feat_in_single <- stack("C:/Users/saraw/Desktop/feature_inputs/fly_all.grd")	
-	plant_feat_in_single <- stack("C:/Users/saraw/Desktop/feature_inputs/plant_all.grd")
+	vert_feat_in_single <- stack("feature_inputs/vert_all.grd")
+	fly_feat_in_single <- stack("feature_inputs/fly_all.grd")	
+	plant_feat_in_single <- stack("feature_inputs/plant_all.grd")
 	
 	# ----------------------
 	#  Load species weighting for single layer species stacks.
-	load("C:/Users/saraw/Desktop/feature_inputs/vert_rep_weight.Rdata")
-	load("C:/Users/saraw/Desktop/feature_inputs/fly_rep_weight.Rdata")
-	load("C:/Users/saraw/Desktop/feature_inputs/plant_rep_weight.Rdata")
+	load("feature_inputs/vert_rep_weight.Rdata")
+	load("feature_inputs/fly_rep_weight.Rdata")
+	load("feature_inputs/plant_rep_weight.Rdata")
 	
 	# ----------------------
 	#  Set up problem for connectivity and carbon input layers
-	elev_conn_feat_r <- raster("C:/Users/saraw/Desktop/feature_inputs/elev_conn_feat_in.grd")
-	corr_feat_r <- raster("C:/Users/saraw/Desktop/feature_inputs/corr_feat_in.grd")
-	acd_feat_r <- raster("C:/Users/saraw/Desktop/feature_inputs/acd_feat_in.grd")
+	elev_conn_feat_r <- raster("feature_inputs/elev_conn_feat_in.grd")
+	corr_feat_r <- raster("feature_inputs/corr_feat_in.grd")
+	acd_feat_r <- raster("feature_inputs/acd_feat_in.grd")
 	
 	# ----------------------
 	#  Create raster following template of study area 
@@ -70,12 +72,12 @@ library(ggplot2)
 	
 	# ----------------------
 	#  Planning unit grids
-	load(file = "C:/Users/saraw/Desktop/planning_unit_grids/sa_grid.Rdata")
-	load(file = "C:/Users/saraw/Desktop/planning_unit_grids/sfi_grid.Rdata")
-	load(file = "C:/Users/saraw/Desktop/planning_unit_grids/idris_grid.Rdata")
-	load(file = "C:/Users/saraw/Desktop/planning_unit_grids/deram_grid.Rdata")
-	load(file = "C:/Users/saraw/Desktop/planning_unit_grids/crock_kina_grid.Rdata")
-	load(file = "C:/Users/saraw/Desktop/planning_unit_grids/sega_grid.Rdata")
+	load(file = "planning_unit_grids/sa_grid.Rdata")
+	load(file = "planning_unit_grids/sfi_grid.Rdata")
+	load(file = "planning_unit_grids/idris_grid.Rdata")
+	load(file = "planning_unit_grids/deram_grid.Rdata")
+	load(file = "planning_unit_grids/crock_kina_grid.Rdata")
+	load(file = "planning_unit_grids/sega_grid.Rdata")
 
 	
 	const_cost_h <- 500
@@ -299,8 +301,8 @@ library(ggplot2)
 	scen1_sf <- st_as_sf(scen1_tmp) %>%	
 		mutate(ras_val = 1)
 	scen1_out <- s3
-	save(scen1_sf, file = "C:/Users/saraw/Desktop/scenario_outputs/scen1/scen1_sf.Rdata")
-	save(scen1_out, file = "C:/Users/saraw/Desktop/scenario_outputs/scen1/scen1_out.Rdata")
+	save(scen1_sf, file = "scenario_outputs/scen1/scen1_sf.Rdata")
+	save(scen1_out, file = "scenario_outputs/scen1/scen1_out.Rdata")
 	
 
 	
@@ -526,8 +528,8 @@ library(ggplot2)
 	scen1_blm_sf <- st_as_sf(scen1_blm_tmp) %>%	
 		mutate(ras_val = 1)
 	scen1_blm_out <- s3_blm
-	save(scen1_blm_sf, file = "C:/Users/saraw/Desktop/scenario_outputs/scen1/scen1_blm_sf.Rdata")
-	save(scen1_blm_out, file = "C:/Users/saraw/Desktop/scenario_outputs/scen1/scen1_blm_out.Rdata")
+	save(scen1_blm_sf, file = "scenario_outputs/scen1/scen1_blm_sf.Rdata")
+	save(scen1_blm_out, file = "scenario_outputs/scen1/scen1_blm_out.Rdata")
 	
 
 

@@ -1,5 +1,5 @@
 ###############################################################################
-#  Prioritization scenario - 4
+#  Prioritization scenario - 3
 #  Sara Williams
 ###############################################################################
 
@@ -11,7 +11,7 @@
 #        - 6 individual inputs prioritized separately for each area then prioritized together for each
 #          area for a total ha in each
 #     2. Together, SFI, Idris and Deramakot became locked in for overall prioritization
-#     3. Segaliud Lokan Forest Reserve locked in and added to locked in area for overall prioritization
+#     3. Segaliud Lokan Forest Reserve not locked in but available for selection in solution.
 #     4. Area between Crocker Range and Kinabalu Park is locked out   
 #     5. Total area for overall prioritization 410,000 ha
 #        - 6 individual inputs prioritized separately for whole of Sabah then prioritized together 
@@ -20,6 +20,8 @@
 #  Ran above for both:
 #     1. No BLM constraints
 #     2. BLM constraint
+
+setwd("C:/Users/saraw/Documents/Prioritization/")
 
 
 
@@ -45,25 +47,25 @@ library(ggplot2)
 
 	# ----------------------
 	#  Load species ranges (1 layer per species).
-	vert_feat_in_single <- stack("C:/Users/saraw/Desktop/feature_inputs/vert_all.grd")
-	fly_feat_in_single <- stack("C:/Users/saraw/Desktop/feature_inputs/fly_all.grd")	
-	plant_feat_in_single <- stack("C:/Users/saraw/Desktop/feature_inputs/plant_all.grd")
+	vert_feat_in_single <- stack("feature_inputs/vert_all.grd")
+	fly_feat_in_single <- stack("feature_inputs/fly_all.grd")	
+	plant_feat_in_single <- stack("feature_inputs/plant_all.grd")
 	
 	# ----------------------
 	#  Load species weighting for single layer species stacks.
-	load("C:/Users/saraw/Desktop/feature_inputs/vert_rep_weight.Rdata")
-	load("C:/Users/saraw/Desktop/feature_inputs/fly_rep_weight.Rdata")
-	load("C:/Users/saraw/Desktop/feature_inputs/plant_rep_weight.Rdata")
+	load("feature_inputs/vert_rep_weight.Rdata")
+	load("feature_inputs/fly_rep_weight.Rdata")
+	load("feature_inputs/plant_rep_weight.Rdata")
 	
 	# ----------------------
 	#  Set up problem for connectivity and carbon input layers
-	elev_conn_feat_r <- raster("C:/Users/saraw/Desktop/feature_inputs/elev_conn_feat_in.grd")
-	corr_feat_r <- raster("C:/Users/saraw/Desktop/feature_inputs/corr_feat_in.grd")
-	acd_feat_r <- raster("C:/Users/saraw/Desktop/feature_inputs/acd_feat_in.grd")
+	elev_conn_feat_r <- raster("feature_inputs/elev_conn_feat_in.grd")
+	corr_feat_r <- raster("feature_inputs/corr_feat_in.grd")
+	acd_feat_r <- raster("feature_inputs/acd_feat_in.grd")
 	
 	# ----------------------
 	#  Create raster following template of study area 
-	fly_feat_in_single <- stack("C:/Users/saraw/Desktop/feature_inputs/fly_all.grd")
+	fly_feat_in_single <- stack("feature_inputs/fly_all.grd")
 	temp <- fly_feat_in_single[[1]]
 	r_mat <- matrix(0, nrow(temp), ncol(temp))
 	r_template <- raster(r_mat)
@@ -78,12 +80,11 @@ library(ggplot2)
 	
 	# ----------------------
 	#  Planning unit grids
-	load(file = "C:/Users/saraw/Desktop/planning_unit_grids/sa_grid.Rdata")
-	load(file = "C:/Users/saraw/Desktop/planning_unit_grids/sfi_grid.Rdata")
-	load(file = "C:/Users/saraw/Desktop/planning_unit_grids/idris_grid.Rdata")
-	load(file = "C:/Users/saraw/Desktop/planning_unit_grids/deram_grid.Rdata")
-	load(file = "C:/Users/saraw/Desktop/planning_unit_grids/crock_kina_grid.Rdata")
-	load(file = "C:/Users/saraw/Desktop/planning_unit_grids/sega_grid.Rdata")
+	load(file = "planning_unit_grids/sa_grid.Rdata")
+	load(file = "planning_unit_grids/sfi_grid.Rdata")
+	load(file = "planning_unit_grids/idris_grid.Rdata")
+	load(file = "planning_unit_grids/deram_grid.Rdata")
+	load(file = "planning_unit_grids/crock_kina_grid.Rdata")
 	
 
 	const_cost_h <- 500
@@ -131,18 +132,7 @@ library(ggplot2)
 		dplyr::filter(area_h > 100) %>%
 		mutate(solution_1 = 1)
 	
-	pu_sega_tmp <- sega_grid %>%
-		mutate(area_tmp = st_area(.) * 0.0001) %>%
-		separate(area_tmp, sep = " ", c("area_h_tmp"), drop = TRUE) 
-	pu_sega_tmp$area_h_tmp <- as.numeric(pu_sega_tmp$area_h_tmp)
-	pu_sega <- pu_sega_tmp %>%
-		mutate(area_h = ifelse(area_h_tmp < 1, 1, area_h_tmp)) %>%
-		mutate(const_cost = const_cost_h) %>%
-		dplyr::select(-area_h_tmp) %>%
-		dplyr::filter(area_h > 100) %>%
-		mutate(solution_1 = 1)
 	
-
 	
 # =============================================================================
 #  Set up initial locked in and locked out areas.
@@ -150,7 +140,7 @@ library(ggplot2)
 	
 	# ----------------------
 	#  Locked in
-	locked_in_tmp <- rbind(pu_sega, pu_deram)
+	locked_in_tmp <- as(deram_grid, 'Spatial')
 	
 	# ----------------------
 	#  Locked out
@@ -162,8 +152,8 @@ library(ggplot2)
 #  Run prioritzation with no BLM constraint
 # =============================================================================	
 	
-
-
+	
+	
 # =============================================================================
 #  STEP 1: Set up and solve problem for species ranges within SFI area
 # =============================================================================
@@ -291,7 +281,7 @@ library(ggplot2)
 	s_cond1_sfi_u <- st_union(s_cond1_sfi_sf)
 	s_acd1_sfi_u <- st_union(s_acd1_sfi_sf)
 	s_corr1_sfi_u <- st_union(s_corr1_sfi_sf)
-
+		
 	# ----------------------
 	#  Convert to sp objects
 	s_cond_sp_sfi <- as(s_cond1_sfi_u, 'Spatial')
@@ -483,7 +473,7 @@ library(ggplot2)
 	s_cond1_idris_u <- st_union(s_cond1_idris_sf)
 	s_acd1_idris_u <- st_union(s_acd1_idris_sf)
 	s_corr1_idris_u <- st_union(s_corr1_idris_sf)
-	
+
 	# ----------------------
 	#  Convert to sp objects
 	s_cond_sp_idris <- as(s_cond1_idris_u, 'Spatial')
@@ -555,7 +545,7 @@ library(ggplot2)
 	
 	#  Combine prioritized areas of SFI and Idris
 	locked_in_sfi_idris <-  rbind(s2_sfi_sf, s2_idris_sf)
-	locked_in_all_sf <- rbind(locked_in_sfi_idris, locked_in_tmp)
+	locked_in_all_sf <- rbind(locked_in_sfi_idris, pu_deram)
 	locked_in_all <- as(locked_in_all_sf, 'Spatial')
 	
 	
@@ -649,7 +639,7 @@ library(ggplot2)
 	#  Set up problem 2 for ACD
 	p_acd2 <- problem(x = pu_in, features = acd_feat_r, cost_column = "area_h") %>%
 		add_max_features_objective(410000) %>%
-		add_relative_targets(0.15) %>%
+		add_relative_targets(0.2) %>%
 		add_locked_in_constraints(locked_in_all) %>%
 		add_locked_out_constraints(locked_out) %>%
 		add_binary_decisions() %>%
@@ -668,7 +658,7 @@ library(ggplot2)
 	#  Set up problem 2 for corridors
 	p_corr2 <- problem(x = pu_in, features = corr_feat_r, cost_column = "area_h") %>%
 		add_max_features_objective(410000) %>%
-		add_relative_targets(0.05) %>%
+		add_relative_targets(0.65) %>%
 		add_locked_in_constraints(locked_in_all) %>%
 		add_locked_out_constraints(locked_out) %>%
 		add_binary_decisions() %>%
@@ -728,7 +718,7 @@ library(ggplot2)
 
 	# ----------------------
 	#  Set up problem for round 2.
-	equal_targets <- 0.85
+	equal_targets <- 0.8
 	p2 <- problem(x = pu_in, features = all_feat_in, cost_column = "area_h") %>%
 		add_max_features_objective(410000) %>%
 		add_relative_targets(equal_targets) %>%
@@ -773,12 +763,12 @@ library(ggplot2)
 	
 	# ----------------------
 	#  Save output.
-	scen4_tmp <- as(s3_sf, "Spatial")
-	scen4_sf <- st_as_sf(scen4_tmp) %>%	
+	scen3_tmp <- as(s3_sf, "Spatial")
+	scen3_sf <- st_as_sf(scen3_tmp) %>%	
 		mutate(ras_val = 1)
-	scen4_out <- s3
-	save(scen4_sf, file = "C:/Users/saraw/Desktop/scenario_outputs/scen4/scen4_sf.Rdata")
-	save(scen4_out, file = "C:/Users/saraw/Desktop/scenario_outputs/scen4/scen4_out.Rdata")
+	scen3_out <- s3
+	save(scen3_sf, file = "scenario_outputs/scen3/scen3_sf.Rdata")
+	save(scen3_out, file = "scenario_outputs/scen3/scen3_out.Rdata")
 	
 	
 	
@@ -794,7 +784,7 @@ library(ggplot2)
 #  Run prioritzation with BLM constraint
 # =============================================================================	
 	
-
+	
 
 # =============================================================================
 #  STEP 1: Set up and solve problem for species ranges within SFI area
@@ -949,6 +939,7 @@ library(ggplot2)
 	prior_corr_blm_feat_r_sfi <- raster::mask(corr_feat_r, s_corr_blm_sp_sfi)
 	
 	
+
 	
 # =============================================================================
 #  STEP 2: Set up prioritized inputs from above as new inputs for prioritization of 
@@ -1134,7 +1125,7 @@ library(ggplot2)
 	s_cond1_blm_idris_u <- st_union(s_cond1_blm_idris_sf)
 	s_acd1_blm_idris_u <- st_union(s_acd1_blm_idris_sf)
 	s_corr1_blm_idris_u <- st_union(s_corr1_blm_idris_sf)
-	
+		
 	# ----------------------
 	#  Convert to sp objects
 	s_cond_blm_sp_idris <- as(s_cond1_blm_idris_u, 'Spatial')
@@ -1208,7 +1199,7 @@ library(ggplot2)
 	
 	#  Combine prioritized areas of SFI and Idris
 	locked_in_sfi_idris_blm <-  rbind(s2_sfi_blm_sf, s2_idris_blm_sf)
-	locked_in_all_blm_sf <- rbind(locked_in_sfi_idris_blm, locked_in_tmp)
+	locked_in_all_blm_sf <- rbind(locked_in_sfi_idris_blm, pu_deram)
 	locked_in_all_blm <- as(locked_in_all_blm_sf, 'Spatial')
 	
 	
@@ -1434,11 +1425,10 @@ library(ggplot2)
 	
 	# ----------------------
 	#  Save output.
-	scen4_blm_tmp <- as(s3_blm_sf, "Spatial")
-	scen4_blm_sf <- st_as_sf(scen4_blm_tmp) %>%	
+	scen3_blm_tmp <- as(s3_blm_sf, "Spatial")
+	scen3_blm_sf <- st_as_sf(scen3_blm_tmp) %>%	
 		mutate(ras_val = 1)
-	scen4_blm_out <- s3_blm
-	
-	save(scen4_blm_out, file = "C:/Users/saraw/Desktop/scenario_outputs/scen4/scen4_blm_out.Rdata")
-	save(scen4_blm_sf, file = "C:/Users/saraw/Desktop/scenario_outputs/scen4/scen4_blm_sf.Rdata")
+	scen3_blm_out <- s3_blm
+	save(scen3_blm_sf, file = "scenario_outputs/scen3/scen3_blm_sf.Rdata")
+	save(scen3_blm_out, file = "scenario_outputs/scen3/scen3_blm_out.Rdata")
 	
